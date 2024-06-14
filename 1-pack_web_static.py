@@ -1,19 +1,21 @@
 #!/usr/bin/python3
-"""Fabric script which generates a tgz archive"""
-
-from datetime import datetime
 from fabric.api import local
-from os.path import isdir
+from time import strftime
 
 
 def do_pack():
-    """TGZ"""
+    """
+    Generates a .tgz file from the contents of the web_static folder
+
+    Returns:
+        str: The file path of the generated .tgz file if successful else None.
+    """
+
+    date_time = strftime("%Y%m%d%H%M%S")
+    file_name = "versions/web_static_{}.tgz".format(date_time)
     try:
-        date = datetime.now().strftime("%Y%m%d%H%M%S")
-        if isdir("versions") is False:
-            local("mkdir versions")
-        file_name = "versions/web_static_{}.tgz".format(date)
-        local("tar -cvzf {} web_static".format(file_name))
+        local("mkdir -p versions")
+        local("tar -zcvf {} web_static".format(file_name))
         return file_name
-    except:
+    except Exception as err:
         return None
